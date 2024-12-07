@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 const createdAt = timestamp("created_at", { withTimezone: true })
@@ -17,6 +18,10 @@ export const UsersTable = pgTable("users", {
   updatedAt,
 });
 
+export const usersRelations = relations(UsersTable, ({ many }) => ({
+  links: many(LinksTable),
+}));
+
 export const LinksTable = pgTable("links", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
@@ -27,3 +32,10 @@ export const LinksTable = pgTable("links", {
   createdAt,
   updatedAt,
 });
+
+export const linksRelations = relations(LinksTable, ({ one }) => ({
+  user: one(UsersTable, {
+    fields: [LinksTable.userId],
+    references: [UsersTable.id],
+  }),
+}));

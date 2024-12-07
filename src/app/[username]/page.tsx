@@ -1,7 +1,7 @@
 import { LinkPageFooter } from "@/app/[username]/_components/footer";
 import { LinkCard } from "@/app/[username]/_components/link-card";
 import { db } from "@/lib/drizzle/db";
-import { LinksTable, UsersTable } from "@/lib/drizzle/schema";
+import { UsersTable } from "@/lib/drizzle/schema";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,11 +12,8 @@ type PageProps = {
 };
 
 const LinkPageDataSchema = z.object({
-  user: z.object({
-    id: z.string(),
-    displayName: z.string(),
-    username: z.string(),
-  }),
+  displayName: z.string(),
+  username: z.string(),
   links: z.array(
     z.object({
       id: z.string(),
@@ -32,17 +29,17 @@ const fetchData = async ({
   const username = (await params).username;
 
   try {
-    const user = await db.query.UsersTable.findFirst({
+    const data = await db.query.UsersTable.findFirst({
       where: eq(UsersTable.username, username),
+      with: {
+        links: true,
+      },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!data?.links.length) throw new Error("No links found");
 
-    const links = await db.query.LinksTable.findMany({
-      where: eq(LinksTable.userId, user.id),
-    });
+    const parsedData = LinkPageDataSchema.parse(data);
 
-    const parsedData = LinkPageDataSchema.parse({ user, links });
     return parsedData;
   } catch {
     return notFound();
@@ -50,16 +47,16 @@ const fetchData = async ({
 };
 
 export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
-  const { user, links } = await fetchData(props);
+  const { displayName, links } = await fetchData(props);
 
   return {
-    title: `${user.displayName} | AllLinks`,
-    description: `Visit ${links.length} links by ${user.displayName}.`,
+    title: `${displayName} | AllLinks`,
+    description: `Visit ${links.length} links by ${displayName}.`,
   };
 };
 
 export default async function UserPage(props: PageProps) {
-  const { user, links } = await fetchData(props);
+  const { displayName, username, links } = await fetchData(props);
 
   return (
     <div className="flex min-h-svh flex-col bg-slate-200 bg-[url(/bg.jpg)] bg-cover bg-center bg-no-repeat">
@@ -68,10 +65,10 @@ export default async function UserPage(props: PageProps) {
           <div className="overflow-hidden rounded-xl shadow-2xl shadow-slate-900/15">
             <header className="bg-slate-800 p-8 text-center text-white backdrop-blur-2xl">
               <h1 className="text-3xl font-bold tracking-tight">
-                {user.displayName}
+                {displayName}
               </h1>
               <h4 className="-mb-1.5 mt-1.5 font-medium text-slate-400">
-                @{user.username}
+                @{username}
               </h4>
             </header>
             <div className="bg-slate-100/50 p-4 backdrop-blur-2xl sm:p-6 md:p-8">
