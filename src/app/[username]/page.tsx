@@ -62,7 +62,7 @@ export default async function UserPage(props: PageProps) {
   const { user, links } = await fetchData(props);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-200 bg-[url(/bg.jpg)] bg-cover bg-center bg-no-repeat">
+    <div className="flex min-h-svh flex-col bg-slate-200 bg-[url(/bg.jpg)] bg-cover bg-center bg-no-repeat">
       <div className="grow">
         <div className="mx-auto max-w-xl p-4 sm:p-6 md:p-8 lg:max-w-2xl lg:p-12 xl:p-16 2xl:p-24">
           <div className="overflow-hidden rounded-xl shadow-2xl shadow-slate-900/15">
@@ -74,8 +74,8 @@ export default async function UserPage(props: PageProps) {
                 @{user.username}
               </h4>
             </header>
-            <div className="bg-slate-100/50 p-8 backdrop-blur-2xl">
-              <ul className="space-y-6">
+            <div className="bg-slate-100/50 p-4 backdrop-blur-2xl sm:p-6 md:p-8">
+              <ul className="space-y-4 sm:space-y-6">
                 {links.map((link) => (
                   <li key={link.id}>
                     <LinkCard data={link} />
