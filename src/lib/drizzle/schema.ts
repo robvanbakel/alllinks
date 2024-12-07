@@ -10,9 +10,9 @@ const updatedAt = timestamp("updated_at", { withTimezone: true })
 
 export const UsersTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  externalId: text("external_id"),
+  externalId: text("external_id").unique(),
   displayName: text("display_name"),
-  username: text("username").notNull(),
+  username: text("username").unique(),
   createdAt,
   updatedAt,
 });
