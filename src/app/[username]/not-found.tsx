@@ -7,7 +7,7 @@ export default function NotFound() {
       <p>
         Please check the url or visit{" "}
         <Link href="/" className="font-semibold hover:underline">
-          AllLinks.com
+          AllLinks.app
         </Link>{" "}
         to learn more.
       </p>
