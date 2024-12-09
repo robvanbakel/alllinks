@@ -1,5 +1,5 @@
-import { SignOutButton } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  return <SignOutButton />;
+  redirect("/dashboard/links");
 }
