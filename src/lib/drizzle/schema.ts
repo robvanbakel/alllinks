@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+const id = uuid("id").primaryKey().defaultRandom();
 const createdAt = timestamp("created_at", { withTimezone: true })
   .notNull()
   .defaultNow();
@@ -10,7 +11,7 @@ const updatedAt = timestamp("updated_at", { withTimezone: true })
   .$onUpdate(() => new Date());
 
 export const UsersTable = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id,
   externalId: text("external_id").unique(),
   displayName: text("display_name"),
   username: text("username").unique(),
@@ -23,7 +24,7 @@ export const usersRelations = relations(UsersTable, ({ many }) => ({
 }));
 
 export const LinksTable = pgTable("links", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id,
   userId: uuid("user_id")
     .notNull()
     .references(() => UsersTable.id, { onDelete: "cascade" }),
