@@ -40,7 +40,7 @@ export const LinkCardForm = ({
 
   const onCreate = async (formData: FormValues) => {
     try {
-      await axios.post("/api/create-link", formData);
+      await axios.post("/api/link", formData);
 
       toast({
         title: "Link added",
@@ -63,7 +63,7 @@ export const LinkCardForm = ({
     if (!link) throw new Error("Link not found");
 
     try {
-      await axios.patch(`/api/update-link/${link.id}`, formData);
+      await axios.patch(`/api/link/${link.id}`, formData);
 
       toast({
         title: "Update published",
