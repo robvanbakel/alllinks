@@ -114,7 +114,7 @@ export const LinkCardForm = ({
           />
         </div>
         <Button
-          disabled={!form.formState.isValid}
+          disabled={link ? !form.formState.isDirty : !form.formState.isValid}
           className="mt-8 w-full bg-violet-600 text-white hover:bg-violet-700 active:bg-violet-800 disabled:bg-muted-foreground"
           type="submit"
         >
