@@ -1,5 +1,6 @@
 import { DashboardPageWrapper } from "@/app/dashboard/_components/dashboard-page-wrapper";
 import { ExpandableLinkCard } from "@/app/dashboard/_components/expandable-link-card";
+import { NewLinkCard } from "@/app/dashboard/_components/new-link-card";
 import { db } from "@/lib/drizzle/db";
 import { UsersTable } from "@/lib/drizzle/schema";
 import { currentUser } from "@clerk/nextjs/server";
@@ -30,6 +31,7 @@ export default async function DashboardLinksPage() {
         {data.links.map((link) => (
           <ExpandableLinkCard link={link} key={link.id} />
         ))}
+        <NewLinkCard />
       </div>
     </DashboardPageWrapper>
   );

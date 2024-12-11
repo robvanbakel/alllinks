@@ -27,18 +27,41 @@ export const LinkCardForm = ({
   link,
   afterSubmit,
 }: {
-  link: { id: string; name: string; url: string };
+  link?: { id: string; name: string; url: string };
   afterSubmit: (formData: FormValues) => void;
 }) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: link.name,
-      url: link.url,
+      name: link?.name ?? "",
+      url: link?.url ?? "",
     },
   });
 
-  const onSubmit = async (formData: FormValues) => {
+  const onCreate = async (formData: FormValues) => {
+    try {
+      await axios.post("/api/create-link", formData);
+
+      toast({
+        title: "Link added",
+        description: `${formData.name} has been successfully created!`,
+      });
+
+      form.reset(formData);
+
+      afterSubmit(formData);
+    } catch {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const onUpdate = async (formData: FormValues) => {
+    if (!link) throw new Error("Link not found");
+
     try {
       await axios.patch(`/api/update-link/${link.id}`, formData);
 
@@ -61,7 +84,7 @@ export const LinkCardForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(link ? onUpdate : onCreate)}>
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -91,11 +114,11 @@ export const LinkCardForm = ({
           />
         </div>
         <Button
-          disabled={!form.formState.isDirty}
+          disabled={!form.formState.isValid}
           className="mt-8 w-full bg-violet-600 text-white hover:bg-violet-700 active:bg-violet-800 disabled:bg-muted-foreground"
           type="submit"
         >
-          Submit
+          {link ? "Update link" : "Create link"}
         </Button>
       </form>
     </Form>
