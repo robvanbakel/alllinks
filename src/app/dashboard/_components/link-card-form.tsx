@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
+import { client } from "@/lib/api";
 
 const FormSchema = z.object({
   name: z.string().min(1),
@@ -40,7 +40,7 @@ export const LinkCardForm = ({
 
   const onCreate = async (formData: FormValues) => {
     try {
-      await axios.post("/api/link", formData);
+      await client.link.$post({ json: formData });
 
       toast({
         title: "Link added",
@@ -63,7 +63,10 @@ export const LinkCardForm = ({
     if (!link) throw new Error("Link not found");
 
     try {
-      await axios.patch(`/api/link/${link.id}`, formData);
+      await client.link[":id"].$patch({
+        json: formData,
+        param: { id: link.id },
+      });
 
       toast({
         title: "Update published",
