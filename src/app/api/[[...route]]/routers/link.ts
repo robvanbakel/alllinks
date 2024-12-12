@@ -7,6 +7,26 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 export const linkRouter = new Hono()
+  .get("/", async (c) => {
+    const user = await currentUser();
+
+    if (!user) {
+      return c.json(undefined, 401);
+    }
+
+    const data = await db.query.UsersTable.findFirst({
+      where: eq(UsersTable.externalId, user.id),
+      with: {
+        links: true,
+      },
+    });
+
+    if (!data) {
+      return c.json(undefined, 404);
+    }
+
+    return c.json(data.links);
+  })
   .post(
     "/",
     zValidator(

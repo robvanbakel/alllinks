@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
+import { QueryProvider } from "@/lib/tanstack-query";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${inter.className} antialiased`}>{children}</body>
-      </html>
+      <QueryProvider>
+        <html lang="en">
+          <body className={`${inter.className} antialiased`}>{children}</body>
+        </html>
+      </QueryProvider>
     </ClerkProvider>
   );
 }

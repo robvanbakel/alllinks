@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,6 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const FormSchema = z.object({
   name: z.string().min(1),
@@ -30,6 +31,50 @@ export const LinkCardForm = ({
   link?: { id: string; name: string; url: string };
   afterSubmit: (formData: FormValues) => void;
 }) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: createLink, isPending: isCreatePending } = useMutation({
+    mutationFn: (formData: FormValues) => client.link.$post({ json: formData }),
+    onSuccess: async (res) => {
+      await queryClient.invalidateQueries({ queryKey: ["links-list"] });
+
+      const data = await res.json();
+
+      toast({
+        title: "Link added",
+        description: `${data.name} has been successfully created!`,
+      });
+
+      form.reset();
+      afterSubmit(data);
+    },
+  });
+
+  const { mutate: updateLink, isPending: isUpdatePending } = useMutation({
+    mutationFn: (formData: FormValues) => {
+      if (!link) throw new Error("Link not found");
+
+      return client.link[":id"].$patch({
+        json: formData,
+        param: { id: link.id },
+      });
+    },
+    onSuccess: async (res) => {
+      await queryClient.invalidateQueries({ queryKey: ["links-list"] });
+
+      const data = await res.json();
+
+      toast({
+        title: "Update published",
+        description: `${data.name} has been successfully updated!`,
+      });
+
+      form.reset(data);
+
+      afterSubmit(data);
+    },
+  });
+
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -38,44 +83,14 @@ export const LinkCardForm = ({
     },
   });
 
-  const onCreate = async (formData: FormValues) => {
+  const submitHandler = async (formData: FormValues) => {
     try {
-      await client.link.$post({ json: formData });
+      if (link) {
+        await updateLink(formData);
+        return;
+      }
 
-      toast({
-        title: "Link added",
-        description: `${formData.name} has been successfully created!`,
-      });
-
-      form.reset(formData);
-
-      afterSubmit(formData);
-    } catch {
-      toast({
-        title: "Something went wrong",
-        description: "Please try again later",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const onUpdate = async (formData: FormValues) => {
-    if (!link) throw new Error("Link not found");
-
-    try {
-      await client.link[":id"].$patch({
-        json: formData,
-        param: { id: link.id },
-      });
-
-      toast({
-        title: "Update published",
-        description: `${formData.name} has been successfully updated!`,
-      });
-
-      form.reset(formData);
-
-      afterSubmit(formData);
+      await createLink(formData);
     } catch {
       toast({
         title: "Something went wrong",
@@ -87,7 +102,7 @@ export const LinkCardForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(link ? onUpdate : onCreate)}>
+      <form onSubmit={form.handleSubmit(submitHandler)}>
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -117,11 +132,21 @@ export const LinkCardForm = ({
           />
         </div>
         <Button
-          disabled={link ? !form.formState.isDirty : !form.formState.isValid}
+          disabled={
+            isCreatePending ||
+            isUpdatePending ||
+            (link ? !form.formState.isDirty : !form.formState.isValid)
+          }
           className="mt-8 w-full bg-violet-600 text-white hover:bg-violet-700 active:bg-violet-800 disabled:bg-muted-foreground"
           type="submit"
         >
-          {link ? "Update link" : "Create link"}
+          {link
+            ? isUpdatePending
+              ? "Updating link…"
+              : "Update link"
+            : isCreatePending
+              ? "Creating link…"
+              : "Create link"}
         </Button>
       </form>
     </Form>
