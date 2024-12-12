@@ -56,13 +56,15 @@ export const ExpandableLinkCard = ({
             <Link className="inline size-3" /> {formatUrl(displayedData.url)}
           </p>
         </div>
-        <div className="space-x-2">
+        <div
+          className={cn("space-x-2", { "hidden group-hover:block": !isOpen })}
+        >
           <Button
             onClick={(e) => {
               e.stopPropagation();
               deleteLink();
             }}
-            className="hidden bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 group-hover:inline-flex"
+            className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
             size="icon"
             variant="ghost"
           >
