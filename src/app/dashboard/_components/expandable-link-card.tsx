@@ -24,10 +24,10 @@ export const ExpandableLinkCard = ({
   const displayedData = optimisticData ?? link;
 
   return (
-    <div className="rounded-lg bg-white shadow-lg shadow-slate-600/5">
+    <div className="overflow-hidden rounded-lg bg-white shadow-lg shadow-slate-600/5">
       <div
         role="button"
-        className="select-none p-4"
+        className="select-none p-4 transition-all hover:bg-slate-50/75"
         onClick={() => setIsOpen((v) => !v)}
       >
         <h3 className="text-lg font-semibold text-slate-900">
