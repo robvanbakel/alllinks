@@ -1,8 +1,12 @@
 "use client";
 
 import { LinkCardForm } from "@/app/dashboard/_components/link-card-form";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { client } from "@/lib/api";
 import { cn, formatUrl } from "@/lib/utils";
-import { Link } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, Loader2, Trash } from "lucide-react";
 import { useState } from "react";
 
 export const ExpandableLinkCard = ({
@@ -16,6 +20,20 @@ export const ExpandableLinkCard = ({
     url: string;
   }>();
 
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteLink, isPending: isDeletePending } = useMutation({
+    mutationFn: () => client.link[":id"].$delete({ param: { id: link.id } }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["links-list"] });
+
+      toast({
+        title: "Link deleted",
+        description: `${link.name} has been successfully deleted!`,
+      });
+    },
+  });
+
   const afterSubmit = (formData: { name: string; url: string }) => {
     setOptimisticData(formData);
     setIsOpen(false);
@@ -27,15 +45,30 @@ export const ExpandableLinkCard = ({
     <div className="overflow-hidden rounded-lg bg-white shadow-lg shadow-slate-600/5">
       <div
         role="button"
-        className="select-none p-4 transition-all hover:bg-slate-50/75"
+        className="group flex select-none items-center justify-between p-4 transition-all"
         onClick={() => setIsOpen((v) => !v)}
       >
-        <h3 className="text-lg font-semibold text-slate-900">
-          {displayedData.name}
-        </h3>
-        <p className="truncate text-sm text-slate-500 transition-colors">
-          <Link className="inline size-3" /> {formatUrl(displayedData.url)}
-        </p>
+        <div>
+          <h3 className="text-lg font-semibold text-slate-900">
+            {displayedData.name}
+          </h3>
+          <p className="truncate text-sm text-slate-500 transition-colors">
+            <Link className="inline size-3" /> {formatUrl(displayedData.url)}
+          </p>
+        </div>
+        <div className="space-x-2">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteLink();
+            }}
+            className="hidden bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 group-hover:inline-flex"
+            size="icon"
+            variant="ghost"
+          >
+            {isDeletePending ? <Loader2 className="animate-spin" /> : <Trash />}
+          </Button>
+        </div>
       </div>
       <div
         className={cn(

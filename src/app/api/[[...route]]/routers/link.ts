@@ -98,4 +98,17 @@ export const linkRouter = new Hono()
 
       return c.json(newData);
     },
-  );
+  )
+  .delete("/:id", async (c) => {
+    const auth = await currentUser();
+
+    if (!auth) {
+      return c.json(undefined, 401);
+    }
+
+    const linkId = c.req.param("id");
+
+    await db.delete(LinksTable).where(eq(LinksTable.id, linkId));
+
+    return c.json({ success: true });
+  });
