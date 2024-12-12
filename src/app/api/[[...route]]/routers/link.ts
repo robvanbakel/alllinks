@@ -2,7 +2,7 @@ import { db } from "@/lib/drizzle/db";
 import { LinksTable, UsersTable } from "@/lib/drizzle/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ export const linkRouter = new Hono()
     const data = await db.query.UsersTable.findFirst({
       where: eq(UsersTable.externalId, user.id),
       with: {
-        links: true,
+        links: { orderBy: asc(LinksTable.createdAt) },
       },
     });
 

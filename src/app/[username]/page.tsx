@@ -1,8 +1,8 @@
 import { LinkPageFooter } from "@/app/[username]/_components/footer";
 import { LinkCard } from "@/app/[username]/_components/link-card";
 import { db } from "@/lib/drizzle/db";
-import { UsersTable } from "@/lib/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { LinksTable, UsersTable } from "@/lib/drizzle/schema";
+import { asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -32,7 +32,7 @@ const fetchData = async ({
     const data = await db.query.UsersTable.findFirst({
       where: eq(UsersTable.username, username),
       with: {
-        links: true,
+        links: { orderBy: asc(LinksTable.createdAt) },
       },
     });
 
