@@ -12,6 +12,10 @@ const navItems: {
     label: "Links",
     route: "/dashboard/links",
   },
+  {
+    label: "Settings",
+    route: "/dashboard/settings",
+  },
 ];
 
 export default function NavBarNavigation() {
@@ -23,7 +27,7 @@ export default function NavBarNavigation() {
         <li key={label}>
           <Link
             className={cn(
-              "p-2.5 transition-colors ",
+              "p-2.5 transition-colors",
               pathname === route
                 ? "border-b-2 border-violet-600 text-foreground"
                 : "text-foreground/50 hover:text-foreground/90",
