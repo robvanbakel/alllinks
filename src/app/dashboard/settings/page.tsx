@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -28,6 +28,8 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 export default function DashboardSettingsPage() {
+  const queryClient = useQueryClient();
+
   const { data: userData, isLoading: isUserLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -47,7 +49,9 @@ export default function DashboardSettingsPage() {
 
       throw new Error(data.message);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+
       toast({
         title: "Changes saved",
         description: `Your profile has been successfully updated!`,

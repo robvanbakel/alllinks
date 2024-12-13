@@ -1,7 +1,9 @@
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
+import { client } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,7 +11,16 @@ import { usePathname } from "next/navigation";
 export default function ClaimUsernameBanner() {
   const pathname = usePathname();
 
-  if (pathname === "/dashboard/settings") return null;
+  const { data: userData } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await client.user.$get();
+      const data = await res.json();
+      return data;
+    },
+  });
+
+  if (userData?.username || pathname === "/dashboard/settings") return null;
 
   return (
     <div className="rounded-xl bg-violet-600 p-4 text-primary-foreground md:p-6 lg:p-8">
