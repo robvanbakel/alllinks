@@ -20,20 +20,22 @@ export default function ClaimUsernameBanner() {
     },
   });
 
-  if (userData?.username || pathname === "/dashboard/settings") return null;
+  if (userData && !userData.username && pathname !== "/dashboard/settings") {
+    return (
+      <div className="rounded-xl bg-violet-600 p-4 text-primary-foreground md:p-6 lg:p-8">
+        <h4 className="font-bold">Finalize your registration</h4>
+        <p className="mt-1 text-sm">
+          Create your own AllLinks page by creating a unique username.
+        </p>
+        <Link
+          href="/dashboard/settings"
+          className={cn(buttonVariants({ className: "dark" }), "mt-6 group")}
+        >
+          Settings <ChevronRight className="transition-all group-hover:-ml-1" />
+        </Link>
+      </div>
+    );
+  }
 
-  return (
-    <div className="rounded-xl bg-violet-600 p-4 text-primary-foreground md:p-6 lg:p-8">
-      <h4 className="font-bold">Finalize your registration</h4>
-      <p className="mt-1 text-sm">
-        Create your own AllLinks page by creating a unique username.
-      </p>
-      <Link
-        href="/dashboard/settings"
-        className={cn(buttonVariants({ className: "dark" }), "mt-6 group")}
-      >
-        Settings <ChevronRight className="transition-all group-hover:-ml-1" />
-      </Link>
-    </div>
-  );
+  return null;
 }
