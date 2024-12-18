@@ -1,6 +1,6 @@
+import { auth } from "@/auth";
 import { db } from "@/lib/drizzle/db";
-import { LinksTable, UsersTable } from "@/lib/drizzle/schema";
-import { currentUser } from "@clerk/nextjs/server";
+import { LinksTable, ProfilesTable } from "@/lib/drizzle/schema";
 import { zValidator } from "@hono/zod-validator";
 import { asc, eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -8,14 +8,14 @@ import { z } from "zod";
 
 export const linkRouter = new Hono()
   .get("/", async (c) => {
-    const user = await currentUser();
+    const session = await auth();
 
-    if (!user) {
+    if (!session?.user?.id) {
       return c.json(undefined, 401);
     }
 
-    const data = await db.query.UsersTable.findFirst({
-      where: eq(UsersTable.externalId, user.id),
+    const data = await db.query.ProfilesTable.findFirst({
+      where: eq(ProfilesTable.userId, session.user.id),
       with: {
         links: { orderBy: asc(LinksTable.createdAt) },
       },
@@ -37,17 +37,9 @@ export const linkRouter = new Hono()
       }),
     ),
     async (c) => {
-      const auth = await currentUser();
+      const session = await auth();
 
-      if (!auth) {
-        return c.json(undefined, 401);
-      }
-
-      const user = await db.query.UsersTable.findFirst({
-        where: eq(UsersTable.externalId, auth.id),
-      });
-
-      if (!user) {
+      if (!session?.user?.id) {
         return c.json(undefined, 401);
       }
 
@@ -55,7 +47,7 @@ export const linkRouter = new Hono()
 
       const [newData] = await db
         .insert(LinksTable)
-        .values({ ...data, userId: user.id })
+        .values({ ...data, profileId: session.user.id })
         .returning();
 
       return c.json(newData);
@@ -71,9 +63,9 @@ export const linkRouter = new Hono()
       }),
     ),
     async (c) => {
-      const auth = await currentUser();
+      const session = await auth();
 
-      if (!auth) {
+      if (!session?.user?.id) {
         return c.json(undefined, 401);
       }
 
@@ -81,10 +73,9 @@ export const linkRouter = new Hono()
 
       const link = await db.query.LinksTable.findFirst({
         where: eq(LinksTable.id, linkId),
-        with: { user: true },
       });
 
-      if (link?.user.externalId !== auth.id) {
+      if (link?.profileId !== session.user.id) {
         return c.json(undefined, 403);
       }
 
@@ -100,13 +91,21 @@ export const linkRouter = new Hono()
     },
   )
   .delete("/:id", async (c) => {
-    const auth = await currentUser();
+    const session = await auth();
 
-    if (!auth) {
+    if (!session?.user?.id) {
       return c.json(undefined, 401);
     }
 
     const linkId = c.req.param("id");
+
+    const link = await db.query.LinksTable.findFirst({
+      where: eq(LinksTable.id, linkId),
+    });
+
+    if (link?.profileId !== session.user.id) {
+      return c.json(undefined, 403);
+    }
 
     await db.delete(LinksTable).where(eq(LinksTable.id, linkId));
 

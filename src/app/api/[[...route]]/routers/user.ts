@@ -1,6 +1,6 @@
+import { auth } from "@/auth";
 import { db } from "@/lib/drizzle/db";
-import { UsersTable } from "@/lib/drizzle/schema";
-import { currentUser } from "@clerk/nextjs/server";
+import { ProfilesTable } from "@/lib/drizzle/schema";
 import { zValidator } from "@hono/zod-validator";
 import { NeonDbError } from "@neondatabase/serverless";
 import { eq } from "drizzle-orm";
@@ -9,21 +9,21 @@ import { z } from "zod";
 
 export const userRouter = new Hono()
   .get("/", async (c) => {
-    const auth = await currentUser();
+    const session = await auth();
 
-    if (!auth) {
+    if (!session?.user?.id) {
       return c.json(undefined, 401);
     }
 
-    const user = await db.query.UsersTable.findFirst({
-      where: eq(UsersTable.externalId, auth.id),
+    const profile = await db.query.ProfilesTable.findFirst({
+      where: eq(ProfilesTable.userId, session.user.id),
     });
 
-    if (!user) {
+    if (!profile) {
       return c.json(undefined, 401);
     }
 
-    return c.json(user);
+    return c.json(profile);
   })
   .patch(
     "/",
@@ -35,24 +35,27 @@ export const userRouter = new Hono()
       }),
     ),
     async (c) => {
-      const auth = await currentUser();
+      const session = await auth();
 
-      if (!auth) {
+      if (!session?.user?.id) {
         return c.json(undefined, 401);
       }
 
-      const user = await db.query.UsersTable.findFirst({
-        where: eq(UsersTable.externalId, auth.id),
+      const profile = await db.query.ProfilesTable.findFirst({
+        where: eq(ProfilesTable.userId, session.user.id),
       });
 
-      if (!user) {
+      if (!profile) {
         return c.json(undefined, 401);
       }
 
       const data = await c.req.valid("json");
 
       try {
-        await db.update(UsersTable).set(data).where(eq(UsersTable.id, user.id));
+        await db
+          .update(ProfilesTable)
+          .set(data)
+          .where(eq(ProfilesTable.userId, session.user.id));
         return c.json({ success: true });
       } catch (err) {
         if (err instanceof NeonDbError) {

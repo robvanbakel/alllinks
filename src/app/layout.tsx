@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { QueryProvider } from "@/lib/tanstack-query";
 
@@ -17,12 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <QueryProvider>
-        <html lang="en">
-          <body className={`${inter.className} antialiased`}>{children}</body>
-        </html>
-      </QueryProvider>
-    </ClerkProvider>
+    <QueryProvider>
+      <html lang="en">
+        <body className={`${inter.className} antialiased`}>{children}</body>
+      </html>
+    </QueryProvider>
   );
 }
