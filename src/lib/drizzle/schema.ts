@@ -98,7 +98,7 @@ export const AuthenticatorsTable = pgTable(
 export const ProfilesTable = pgTable("profiles", {
   userId: text("userId")
     .primaryKey()
-    .references(() => UsersTable.id, { onDelete: "cascade" }),
+    .references(() => UsersTable.id, { onDelete: "no action" }),
   displayName: text("displayName"),
   username: text("username").unique(),
   createdAt,

@@ -8,6 +8,13 @@
       "when": 1734560871775,
       "tag": "0000_romantic_prism",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1734563673615,
+      "tag": "0001_giant_gargoyle",
+      "breakpoints": true
     }
   ]
 }
