@@ -27,7 +27,7 @@ export default function Home() {
             share, impossible to miss. Simplify your online presence today!
           </p>
           <Link
-            href="/sign-up"
+            href="/sign-in"
             className="group relative w-fit overflow-hidden rounded-full bg-fuchsia-500 px-16 py-6 text-xl font-semibold text-white shadow-2xl shadow-violet-700/35 ring-4 ring-violet-800 ring-offset-4 ring-offset-background transition-all hover:shadow-xl hover:shadow-violet-700/50 hover:ring-offset-8 active:shadow-none active:ring-offset-4"
           >
             Claim your page!
