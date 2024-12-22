@@ -25,6 +25,10 @@ export default async function WelcomePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <Logo size={120} />
+      <p className="mt-6 max-w-prose text-balance text-center">
+        Almost done! To create your page, enter your name and a username. After
+        saving, you can start adding links.
+      </p>
       <Card className="mt-12 w-full max-w-sm p-8">
         <WelcomeForm />
       </Card>
