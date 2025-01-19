@@ -1,0 +1,1 @@
+ALTER TABLE "profiles" ADD CONSTRAINT "username_regex_check" CHECK ("profiles"."username" ~ '^[a-z0-9_-]{3,32}$'::text);

@@ -6,6 +6,7 @@ import { NeonDbError } from "@neondatabase/serverless";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
+import * as validators from "@/lib/validators";
 
 export const userRouter = new Hono()
   .get("/", async (c) => {
@@ -30,8 +31,8 @@ export const userRouter = new Hono()
     zValidator(
       "json",
       z.object({
-        displayName: z.string().min(2),
-        username: z.string().min(2),
+        displayName: validators.profileDisplayName,
+        username: validators.profileUsername,
       }),
     ),
     async (c) => {

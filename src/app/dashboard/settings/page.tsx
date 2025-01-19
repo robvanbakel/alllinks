@@ -13,16 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/api";
+import { formatUsername } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import * as validators from "@/lib/validators";
 
 const FormSchema = z.object({
-  displayName: z.string().min(2),
-  username: z.string().min(2),
+  displayName: validators.profileDisplayName,
+  username: validators.profileUsername,
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -59,12 +61,14 @@ export default function DashboardSettingsPage() {
     },
     onError: (error) => {
       switch (error.message) {
-        case "users_username_unique":
-          toast({
-            title: "Username already taken",
-            description: "Please choose a unique username",
-            variant: "destructive",
-          });
+        case "profiles_username_unique":
+          const username = `@${form.getValues("username")}`;
+
+          form.setError(
+            "username",
+            { message: `Username ${username} already taken` },
+            { shouldFocus: true },
+          );
           break;
         default:
           toast({
@@ -95,6 +99,13 @@ export default function DashboardSettingsPage() {
     return updateProfile(formData);
   };
 
+  const usernameChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    form.clearErrors("username");
+
+    const formattedUserInput = formatUsername(e.target.value);
+    form.setValue("username", formattedUserInput);
+  };
+
   return (
     <DashboardPageWrapper noContentBox title="Settings" contentClass="max-w-lg">
       {isUserLoading ? (
@@ -119,13 +130,32 @@ export default function DashboardSettingsPage() {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={usernameChangeHandler}
+                        autoComplete="off"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage
+                      className={
+                        !fieldState.error ? "text-muted-foreground" : undefined
+                      }
+                    >
+                      Your page URL:{" "}
+                      {form.getValues("username").length >= 3 ? (
+                        <span className="font-bold">
+                          alllinks.app/{form.getValues("username")}
+                        </span>
+                      ) : (
+                        <span className="italic opacity-75">
+                          {"<"}Provide a username{">"}
+                        </span>
+                      )}
+                    </FormMessage>
                   </FormItem>
                 )}
               />

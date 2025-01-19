@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   timestamp,
@@ -6,6 +6,7 @@ import {
   text,
   primaryKey,
   integer,
+  check,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -95,15 +96,24 @@ export const AuthenticatorsTable = pgTable(
   }),
 );
 
-export const ProfilesTable = pgTable("profiles", {
-  userId: text("userId")
-    .primaryKey()
-    .references(() => UsersTable.id, { onDelete: "no action" }),
-  displayName: text("displayName"),
-  username: text("username").unique(),
-  createdAt,
-  updatedAt,
-});
+export const ProfilesTable = pgTable(
+  "profiles",
+  {
+    userId: text("userId")
+      .primaryKey()
+      .references(() => UsersTable.id, { onDelete: "no action" }),
+    displayName: text("displayName"),
+    username: text("username").unique(),
+    createdAt,
+    updatedAt,
+  },
+  (table) => [
+    check(
+      "username_regex_check",
+      sql`${table.username} ~ '^[a-z0-9_-]{3,32}$'::text`,
+    ),
+  ],
+);
 
 export const usersRelations = relations(ProfilesTable, ({ one, many }) => ({
   user: one(UsersTable, {

@@ -5,14 +5,15 @@ import { zValidator } from "@hono/zod-validator";
 import { NeonDbError } from "@neondatabase/serverless";
 import { Hono } from "hono";
 import { z } from "zod";
+import * as validators from "@/lib/validators";
 
 export const profileRouter = new Hono().post(
   "/",
   zValidator(
     "json",
     z.object({
-      displayName: z.string().min(2),
-      username: z.string().min(2),
+      displayName: validators.profileDisplayName,
+      username: validators.profileUsername,
     }),
   ),
   async (c) => {
