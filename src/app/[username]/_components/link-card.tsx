@@ -1,4 +1,4 @@
-import { formatUrl } from "@/lib/utils";
+import { formatUrl } from "@/lib/utils/formatUrl";
 import { Link } from "lucide-react";
 
 export const LinkCard = ({

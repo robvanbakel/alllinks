@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/api";
-import { formatUsername } from "@/lib/utils";
+import { formatUsername } from "@/lib/utils/formatUsername";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
