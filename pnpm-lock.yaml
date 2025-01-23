@@ -56,6 +56,9 @@ importers:
       next-auth:
         specifier: 5.0.0-beta.25
         version: 5.0.0-beta.25(next@15.0.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+      normalize-url:
+        specifier: ^8.0.1
+        version: 8.0.1
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -2111,6 +2114,10 @@ packages:
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
+
+  normalize-url@8.0.1:
+    resolution: {integrity: sha512-IO9QvjUMWxPQQhs60oOu10CRkWCiZzSUkzbXGGV9pviYl1fXYcvkzQ5jV9z8Y6un8ARoVRl4EtC6v6jNqbaJ/w==}
+    engines: {node: '>=14.16'}
 
   oauth4webapi@3.1.4:
     resolution: {integrity: sha512-eVfN3nZNbok2s/ROifO0UAc5G8nRoLSbrcKJ09OqmucgnhXEfdIQOR4gq1eJH1rN3gV7rNw62bDEgftsgFtBEg==}
@@ -4567,6 +4574,8 @@ snapshots:
       - babel-plugin-macros
 
   normalize-path@3.0.0: {}
+
+  normalize-url@8.0.1: {}
 
   oauth4webapi@3.1.4: {}
 

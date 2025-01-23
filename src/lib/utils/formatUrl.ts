@@ -1,15 +1,10 @@
-export const formatUrl = (url: string) => {
-  const { hostname, pathname } = new URL(url);
+import normalizeUrl from "normalize-url";
 
-  let formattedUrl = hostname + pathname;
+export const formatUrl = (url: string): string => {
+  const normalizedUrl = normalizeUrl(url, {
+    stripProtocol: true,
+    stripWWW: true,
+  });
 
-  if (formattedUrl.startsWith("www.")) {
-    formattedUrl = formattedUrl.slice(4);
-  }
-
-  if (formattedUrl.endsWith("/")) {
-    formattedUrl = formattedUrl.slice(0, -1);
-  }
-
-  return formattedUrl;
+  return normalizedUrl;
 };
