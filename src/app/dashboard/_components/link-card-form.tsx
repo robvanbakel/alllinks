@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/api";
+import { validateAndNormalizeUrl } from "@/lib/utils/validateAndNormalizeUrl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -19,7 +20,7 @@ import { z } from "zod";
 
 const FormSchema = z.object({
   name: z.string().min(1),
-  url: z.string().url(),
+  url: z.string().min(1),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -84,13 +85,25 @@ export const LinkCardForm = ({
   });
 
   const submitHandler = async (formData: FormValues) => {
+    const normalizedUrl = validateAndNormalizeUrl(formData.url);
+
+    if (!normalizedUrl) {
+      form.setError("url", { message: "Invalid URL provided" });
+      return;
+    }
+
+    const normalizedFormData = {
+      ...formData,
+      url: normalizedUrl,
+    } satisfies typeof formData;
+
     try {
       if (link) {
-        await updateLink(formData);
+        await updateLink(normalizedFormData);
         return;
       }
 
-      await createLink(formData);
+      await createLink(normalizedFormData);
     } catch {
       toast({
         title: "Something went wrong",
