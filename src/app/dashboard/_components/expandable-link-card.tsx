@@ -46,7 +46,7 @@ export const ExpandableLinkCard = ({
     <div className="overflow-hidden rounded-lg bg-white shadow-lg shadow-slate-600/5">
       <div
         role="button"
-        className="group flex select-none items-center justify-between p-4 transition-all"
+        className="group flex cursor-pointer select-none items-center justify-between p-4 transition-all"
         onClick={() => setIsOpen((v) => !v)}
       >
         <div>

@@ -10,7 +10,7 @@ export const LinkCard = ({
     <a
       href={data.url}
       role="button"
-      className="relative block overflow-hidden rounded-lg bg-slate-50 p-4 shadow-sm transition-all duration-300 hover:scale-[102%] hover:bg-white hover:shadow-xl"
+      className="shadow-xs relative block overflow-hidden rounded-lg bg-slate-50 p-4 transition-all duration-300 hover:scale-[102%] hover:bg-white hover:shadow-xl"
       target="_blank"
     >
       <h3 className="text-lg font-semibold text-slate-900">{data.name}</h3>
