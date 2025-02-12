@@ -28,7 +28,7 @@ export default function Home() {
           </p>
           <Link
             href="/sign-in"
-            className="ring-offset-background group relative w-fit overflow-hidden rounded-full bg-fuchsia-500 px-16 py-6 text-xl font-semibold text-white shadow-2xl shadow-violet-700/35 ring-4 ring-violet-800 ring-offset-4 transition-all hover:shadow-xl hover:shadow-violet-700/50 hover:ring-offset-8 active:shadow-none active:ring-offset-4"
+            className="ring-offset-background group relative overflow-hidden rounded-full bg-fuchsia-500 px-16 py-6 text-xl font-semibold text-white shadow-2xl shadow-violet-700/35 ring-4 ring-violet-800 ring-offset-4 transition-all hover:shadow-xl hover:shadow-violet-700/50 hover:scale-105 active:shadow-none"
           >
             Claim your page!
             <div className="absolute -left-1/4 -top-1/2 h-[180%] w-12 origin-center rotate-[30deg] rounded-full bg-white opacity-60 ease-in-out group-hover:left-[125%] group-hover:transition-all group-hover:duration-500" />
