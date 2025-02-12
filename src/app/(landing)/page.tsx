@@ -13,16 +13,16 @@ export default function Home() {
       <header className="container">
         <NavBar />
       </header>
-      <main className="container grow py-24">
+      <main className="container grow py-16 lg:py-24">
         <div className="flex flex-col items-center text-center">
-          <h1 className="max-w-[10ch] text-balance text-8xl font-bold">
+          <h1 className="max-w-[10ch] text-balance text-6xl md:text-7xl lg:text-8xl font-bold">
             All your links in{" "}
             <span className="bg-linear-to-r from-fuchsia-500 to-violet-700 bg-clip-text text-transparent">
               one place
             </span>
             .
           </h1>
-          <p className="mb-24 mt-16 max-w-prose text-pretty text-2xl">
+          <p className="mb-16 lg:mb-24 mt-12 lg:mt-16 max-w-prose text-pretty text-xl lg:text-2xl">
             Collect links to all your channels in your own custom page. Easy to
             share, impossible to miss. Simplify your online presence today!
           </p>
